@@ -5,18 +5,20 @@ ORIGINAL_PIECE_FILE_PATH = "original_pieces.txt"
 FINAL_PIECE_FILE_PATH = "pieces.txt"
 
 
-def get_pieces():
-    pieces: list[Piece] = []
-    with open(FINAL_PIECE_FILE_PATH, 'r') as piece_file:
-        raw_piece_data = piece_file.readlines()
-        current_piece = []
-        for row in raw_piece_data:
-            if (row.strip() == ""):
-                pieces.append(Piece(current_piece))
-                current_piece = []
-            else:
-                current_piece.append([int(x) for x in row.strip()])
-    return pieces
+PIECE_SET: set[Piece] = set()
+def get_pieces() -> set[Piece]:
+    if(len(PIECE_SET) == 0):
+        with open(FINAL_PIECE_FILE_PATH, 'r') as piece_file:
+            raw_piece_data = piece_file.readlines()
+            current_piece: list[list[bool]] = []
+            for row in raw_piece_data:
+                if (row.strip() == ""):
+                    PIECE_SET.add(Piece(current_piece))
+                    current_piece = []
+                else:
+                    current_piece.append([x == '1' for x in row.strip()])
+    return PIECE_SET
+        
 
 
 def process_original_pieces():
