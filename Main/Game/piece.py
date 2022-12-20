@@ -1,5 +1,5 @@
 from Main.Game.position import Position
-class InvalidPieceException(ValueError):
+class InvalidPieceError(ValueError):
     """Raised when trying to initalize an invalid piece
     """    
     pass
@@ -20,15 +20,15 @@ class Piece:
             length.
         """
         if (len(piece_list) <= 0):
-            raise InvalidPieceException(
+            raise InvalidPieceError(
                 "Invalid piece_list, must have height greater than 0")
 
         if (any([len(piece_list[i]) <= 0 for i in range(len(piece_list))])):
-            raise InvalidPieceException(
-                "Invalid piece list, must have width greater than 0")
+            raise InvalidPieceError(
+                "Invalid piece_list, must have width greater than 0")
 
         if (any([len(piece_list[i]) != len(piece_list[0]) for i in range(len(piece_list))])):
-            raise InvalidPieceException(
+            raise InvalidPieceError(
                 "Invalid piece_list, all rows must be the same width")
 
         self.__piece_list = piece_list
@@ -57,3 +57,29 @@ class Piece:
             bool: Whether or not this piece is occupied at the described position
         """        
         return self.__piece_list[displacement[0]][displacement[1]]
+    
+    def __eq__(self, __o: object) -> bool:
+        """Checks if this Piece is equal to another, where equality is defined
+        as having the same size and having all occupied tiles in the same
+        positions
+
+        Args:
+            __o (object): The other object to check for equality
+
+        Returns:
+            bool: Whether or not this Piece is equal to the given object
+        """        
+        if(not isinstance(__o, Piece)):
+            return False
+        assert isinstance(__o, Piece)
+
+        if(__o.get_size() != self.get_size()):
+            return False
+        
+        size = self.get_size()
+        for row in range(size[0]):
+            for col in range(size[1]):
+                if(self.is_filled_at((row, col)) != __o.is_filled_at((row, col))):
+                    return False
+        return True
+
