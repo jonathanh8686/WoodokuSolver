@@ -1,19 +1,19 @@
 from typing import Any
 from Main.Game.piece import Piece
 
-ORIGINAL_PIECE_FILE_PATH = "original_pieces.txt"
-FINAL_PIECE_FILE_PATH = "pieces.txt"
+ORIGINAL_PIECE_FILE_PATH = "Main/Util/original_pieces.txt"
+FINAL_PIECE_FILE_PATH = "Main/Util/pieces.txt"
 
 
-PIECE_SET: set[Piece] = set()
-def get_pieces() -> set[Piece]:
+PIECE_SET: list[Piece] = []
+def get_pieces() -> list[Piece]:
     if(len(PIECE_SET) == 0):
         with open(FINAL_PIECE_FILE_PATH, 'r') as piece_file:
             raw_piece_data = piece_file.readlines()
             current_piece: list[list[bool]] = []
             for row in raw_piece_data:
                 if (row.strip() == ""):
-                    PIECE_SET.add(Piece(current_piece))
+                    PIECE_SET.append(Piece(current_piece))
                     current_piece = []
                 else:
                     current_piece.append([x == '1' for x in row.strip()])

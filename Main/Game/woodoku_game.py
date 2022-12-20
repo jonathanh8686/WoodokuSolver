@@ -38,10 +38,10 @@ class WoodokuGame(ABC):
         pass
 
     @abstractmethod
-    def get_available_pieces(self) -> frozenset[Piece]:
-        """Returns the set of currently available pieces for placement
+    def get_available_pieces(self) -> list[Piece]:
+        """Returns the list of currently available pieces for placement
 
         Returns:
-            frozenset[Piece]: The set of currently available pieces for placement
+            list[Piece]: The list of currently available pieces for placement
         """
         pass
