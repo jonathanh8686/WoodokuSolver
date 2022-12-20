@@ -3,6 +3,8 @@ from Main.Game.position import Position
 import random
 import pytest
 
+from Tests.Game.Util.piece_util import get_square_piece
+
 
 def test_one_dim_pieces():
     p = Piece([[True]])
@@ -152,3 +154,11 @@ def test_piece_equals():
     p.is_filled_at((1, 2))
     assert p == Piece([[True, False, False], [True, False, True]])
 
+def test_constructor_mutation():
+    piece_list = [[True]]
+    p = Piece(piece_list)
+    assert p.get_size() == (1,1)
+    piece_list.append([False, False])
+    assert p.get_size() == (1,1)
+    piece_list = []
+    assert p.get_size() == (1,1)
