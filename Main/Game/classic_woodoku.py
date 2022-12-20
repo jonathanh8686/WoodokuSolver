@@ -1,7 +1,11 @@
+from typing import Optional
 from Main.Game.position import Position
+
 from Main.Util.generate_pieces import get_pieces
 from Main.Game.woodoku_game import WoodokuGame
 from Main.Game.piece import Piece
+
+import random
 
 
 class InvalidMoveError(Exception):
@@ -22,19 +26,28 @@ class ClassicWoodoku(WoodokuGame):
     """
     SIZE: int = 9
 
-    def __init__(self):
-        '''
-        Initalizes a new Game object which represents a Woodoku game
-        '''
+    def __init__(self, board: Optional[list[list[bool]]] = None,
+                 consecutive_clears=0,
+                 available_pieces: Optional[list[Piece]] = None,
+                 seed=0):
+        """Initalizes a new Game object which represents a Woodoku game
+        Args:
+            seed (int, optional): The seed for the RNG for this game. Defaults to 0.
+        """
+        random.seed(seed)
 
         # this board is a 2-D matrix of False and True, depending on
-        # whether or not the piece is occuiped or not.
-        self.board: list[list[bool]] = [
-            [False for _ in range(self.SIZE)] for _ in range(self.SIZE)]
+        # whether or not the piece is occupied or not.
+        if (board is None):
+            board = [[False for _ in range(self.SIZE)]
+                     for _ in range(self.SIZE)]
+        self.__board: list[list[bool]] = [row[:] for row in board]
 
-        self.actions: list[Piece] = []
+        self.__consecutive_clears = 0
 
-        self.consecutive_clears = 0
+        if(available_pieces is None):
+            available_pieces = random.sample(get_pieces(), 3)
+        self.__available_pieces: list[Piece] = available_pieces[:]
 
     def __check_position_in_bounds(self, pos: Position) -> bool:
         """Returns a boolean that represents whether or not the given position is
@@ -53,7 +66,7 @@ class ClassicWoodoku(WoodokuGame):
             return False
         return True
 
-    def check_piece_fit(self, piece: Piece, pos: Position) -> bool:
+    def piece_will_fit(self, piece: Piece, pos: Position) -> bool:
         """Checks if the given piece fits in the given position
 
         Args:
@@ -83,7 +96,8 @@ class ClassicWoodoku(WoodokuGame):
         denotes the coordinate of the top-left corner of the bounding box
         of the piece. Will mutate this board into whatever the result of such
         a placement is (including clearing relavent sections) and returns
-        the reward for such a move.
+        the reward for such a move. It will also mutate the available pieces for
+        the game, and update them as needed.
 
         Args:
             piece (Piece): The piece to attempt to place on the given position
@@ -96,9 +110,6 @@ class ClassicWoodoku(WoodokuGame):
         Returns:
             int: The reward (points gained) for executing the move
         """
-        if (not self.check_piece_fit(piece, pos)):
-            raise InvalidMoveError(
-                "The given piece does not fit in the given position")
 
         def __add_piece_to_board(piece: Piece, pos: Position) -> None:
             """Adds the given piece to the given position on the board
@@ -191,7 +202,49 @@ class ClassicWoodoku(WoodokuGame):
 
             return reward
 
+        def __handle_available_pieces() -> None:
+            """Mutates the available pieces of this game state after
+            using this piece, or if all pieces have been used it will
+            generate a new set of pieces to use.
+            """
+
+            self.available_pieces.remove(piece)
+            if (len(self.available_pieces) == 0):
+                self.available_pieces = random.sample(get_pieces(), 3)
+
+        if (not self.piece_will_fit(piece, pos)):
+            raise InvalidMoveError(
+                "The given piece does not fit in the given position")
+
+        if (not piece in self.get_available_pieces()):
+            raise InvalidMoveError(
+                "The given piece is not a valid piece to place right now")
+
+        __handle_available_pieces()
+
         __add_piece_to_board(piece, pos)
         reward = __clear_sections()
 
         return reward
+
+    def get_available_pieces(self) -> list[Piece]:
+        """Returns a copy of list of available pieces the player can use
+        this turn.
+
+        Returns:
+            list[Piece]: A copy of the list that contains all the available
+            pieces that the player can use this turn
+        """
+        return self.__available_pieces[:]
+
+    @property
+    def board(self):
+        """Returns a copy of the board for this game
+        """
+        return [row[:] for row in self.__board]
+    
+    @property
+    def consecutive_clears(self):
+        return self.__consecutive_clears
+
+    
