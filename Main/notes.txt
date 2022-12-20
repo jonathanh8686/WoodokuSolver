@@ -1,0 +1,5 @@
+The board is a 9x9 grid, meaning there are 81 possible cells --> 2^81 possible configurations which is way too high
+
+Given a set of 3 pieces (say, A, B, and C) and the state of the board, we need to check all 3! orderings to place them. Then there are O(n^2) ~ 81 places that they can go in. This means just to calculate all possible moves for one state takes 81 * 81 * 81 * 6 = 3,188,646 operations. This is just the number of possible positions to place these blocks -- to check for line clear is likely to take another O(n^2) time and just multiply the result even further 81 * 3188646 = 258,280,326 which is only feasible for maybe 1 step.
+
+
