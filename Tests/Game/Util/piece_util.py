@@ -2,7 +2,7 @@ from Main.Game.piece import Piece
 
 
 def get_dot_piece() -> Piece:
-    return Piece([[True]])
+    return get_square_piece(1)
 
 
 def get_square_piece(size: int) -> Piece:
