@@ -31,7 +31,7 @@ class Piece:
             raise InvalidPieceError(
                 "Invalid piece_list, all rows must be the same width")
 
-        self.__piece_list = piece_list
+        self.__piece_list = [row[:] for row in piece_list]
 
     def get_size(self) -> tuple[int, int]:
         """Returns the size of the bounding box of this piece as (rows, columns)
@@ -82,4 +82,21 @@ class Piece:
                 if(self.is_filled_at((row, col)) != __o.is_filled_at((row, col))):
                     return False
         return True
+    
+    def __hash__(self) -> int:
+        """Hashes this Piece
+
+        Returns:
+            int: The hash for this Piece
+        """        
+        return hash((hash(tuple(row)) for row in self.__piece_list))
+    
+    def __str__(self) -> str:
+        rtn, size = "", self.get_size()
+        for row in range(size[0]):
+            for col in range(size[1]):
+                rtn += "■" if self.is_filled_at((row, col)) else '□'
+            rtn += '\n'
+        return rtn
+
 
