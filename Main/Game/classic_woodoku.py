@@ -45,7 +45,7 @@ class ClassicWoodoku(WoodokuGame):
 
         self.__consecutive_clears = 0
 
-        if(available_pieces is None):
+        if (available_pieces is None):
             available_pieces = random.sample(get_pieces(), 3)
         self.__available_pieces: list[Piece] = available_pieces[:]
 
@@ -83,10 +83,13 @@ class ClassicWoodoku(WoodokuGame):
 
         for row in range(piece_size[0]):
             for col in range(piece_size[1]):
+                if (not piece.is_filled_at((row, col))):
+                    continue
+
                 check_location = Position(pos.row + row, pos.col + col)
                 if (not self.__check_position_in_bounds(check_location)):
                     return False
-                if (self.board[check_location.row][check_location.col]):
+                if (self.__board[check_location.row][check_location.col]):
                     return False
 
         return True
@@ -121,7 +124,9 @@ class ClassicWoodoku(WoodokuGame):
             piece_size = piece.get_size()
             for row in range(piece_size[0]):
                 for col in range(piece_size[1]):
-                    self.board[row + pos.row][col + pos.col] = True
+                    n_row, n_col = row + pos.row, col + pos.col
+                    self.__board[n_row][n_col] |= piece.is_filled_at(
+                        (row, col))
 
         def __clear_sections() -> int:
             """Clears the appropiate sections of the board to be cleared,
@@ -139,7 +144,7 @@ class ClassicWoodoku(WoodokuGame):
                     row (int): The index of the row to remove
                 """
                 for col in range(self.SIZE):
-                    self.board[row][col] = False
+                    self.__board[row][col] = False
 
             def __clear_col(col: int) -> None:
                 """Clears the column at the given column index
@@ -148,7 +153,7 @@ class ClassicWoodoku(WoodokuGame):
                     col (int): The index of the column to remove
                 """
                 for row in range(self.SIZE):
-                    self.board[row][col] = False
+                    self.__board[row][col] = False
 
             def __clear_square(square_pos: Position) -> None:
                 """Clears the square with top-left corner at the given position
@@ -159,30 +164,30 @@ class ClassicWoodoku(WoodokuGame):
                 """
                 for i in range(3):
                     for j in range(3):
-                        self.board[square_pos.row +
-                                   i][square_pos.col + j] = False
+                        self.__board[square_pos.row +
+                                     i][square_pos.col + j] = False
 
             reward = 0
             # check all rows
             for row in range(self.SIZE):
                 to_clear = True
                 for col in range(self.SIZE):
-                    if (not self.board[row][col]):
+                    if (not self.__board[row][col]):
                         to_clear = False
                         break
                 if (to_clear):
-                    reward += 9 * self.consecutive_clears
+                    reward += 18 * (self.__consecutive_clears + 1)
                     __clear_row(row)
 
             # check all columns
             for col in range(self.SIZE):
                 to_clear = True
                 for row in range(self.SIZE):
-                    if (not self.board[row][col]):
+                    if (not self.__board[row][col]):
                         to_clear = False
                         break
                 if (to_clear):
-                    reward += 9 * self.consecutive_clears
+                    reward += 18 * (self.__consecutive_clears + 1)
                     __clear_col(col)
 
             # check all 3x3 squares
@@ -193,11 +198,11 @@ class ClassicWoodoku(WoodokuGame):
                 to_clear = True
                 for i in range(3):
                     for j in range(3):
-                        if (not self.board[start_pos.row + i][start_pos.col + j]):
+                        if (not self.__board[start_pos.row + i][start_pos.col + j]):
                             to_clear = False
                             break
                 if (to_clear):
-                    reward += 9 * self.consecutive_clears
+                    reward += 18 * (self.__consecutive_clears + 1)
                     __clear_square(start_pos)
 
             return reward
@@ -208,9 +213,9 @@ class ClassicWoodoku(WoodokuGame):
             generate a new set of pieces to use.
             """
 
-            self.available_pieces.remove(piece)
-            if (len(self.available_pieces) == 0):
-                self.available_pieces = random.sample(get_pieces(), 3)
+            self.__available_pieces.remove(piece)
+            if (len(self.__available_pieces) == 0):
+                self.__available_pieces = random.sample(get_pieces(), 3)
 
         if (not self.piece_will_fit(piece, pos)):
             raise InvalidMoveError(
@@ -224,6 +229,11 @@ class ClassicWoodoku(WoodokuGame):
 
         __add_piece_to_board(piece, pos)
         reward = __clear_sections()
+        if (reward > 0):
+            self.__consecutive_clears += 1
+        else:
+            self.__consecutive_clears = 0
+        reward += piece.filled
 
         return reward
 
@@ -238,13 +248,13 @@ class ClassicWoodoku(WoodokuGame):
         return self.__available_pieces[:]
 
     @property
-    def board(self):
+    def board(self) -> list[list[bool]]:
         """Returns a copy of the board for this game
         """
         return [row[:] for row in self.__board]
-    
-    @property
-    def consecutive_clears(self):
-        return self.__consecutive_clears
 
-    
+    @property
+    def consecutive_clears(self) -> int:
+        """Returns the number of consecutive clears in this game
+        """        
+        return self.__consecutive_clears

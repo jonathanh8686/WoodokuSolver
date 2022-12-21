@@ -33,6 +33,12 @@ class Piece:
 
         self.__piece_list = [row[:] for row in piece_list]
 
+        fill_count = 0
+        for row in range(len(piece_list)):
+            for col in range(len(piece_list[row])):
+                fill_count += 1 if piece_list[row][col] else 0
+        self.__filled = fill_count
+
     def get_size(self) -> tuple[int, int]:
         """Returns the size of the bounding box of this piece as (rows, columns)
 
@@ -58,6 +64,10 @@ class Piece:
         """        
         return self.__piece_list[displacement[0]][displacement[1]]
     
+    @property
+    def filled(self):
+        return self.__filled
+
     def __eq__(self, __o: object) -> bool:
         """Checks if this Piece is equal to another, where equality is defined
         as having the same size and having all occupied tiles in the same
