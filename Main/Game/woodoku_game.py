@@ -45,3 +45,12 @@ class WoodokuGame(ABC):
             list[Piece]: The list of currently available pieces for placement
         """
         pass
+
+    @abstractmethod
+    def is_over(self) -> bool:
+        """Returns a boolean that represents whether or not this game has ended
+
+        Returns:
+            bool: Whether or not his game has ended
+        """        
+        pass

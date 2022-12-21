@@ -247,6 +247,33 @@ class ClassicWoodoku(WoodokuGame):
         """
         return self.__available_pieces[:]
 
+    def is_over(self) -> bool:
+        """Returns a boolean that represents whether or not the game is over
+
+        Returns:
+            bool: Whether or not the game is over
+        """        
+        def __is_placeable(piece: Piece) -> bool:
+            """Determines if the given piece has any valid moves on the current
+            board
+
+            Args:
+                piece (Piece): The piece to check for valid moves
+
+            Returns:
+                bool: Whether or not the given piece has any valid moves
+            """            
+            for row in range(self.SIZE):
+                for col in range(self.SIZE):
+                    if(self.piece_will_fit(piece, Position(row, col))):
+                        return True
+            return False
+
+        for piece in self.__available_pieces:
+            if(__is_placeable(piece)):
+                return False
+        return True
+
     @property
     def board(self) -> list[list[bool]]:
         """Returns a copy of the board for this game
