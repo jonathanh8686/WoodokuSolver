@@ -16,7 +16,7 @@ def empty_board() -> list[list[bool]]:
 
 
 @pytest.fixture
-def checkered_board(empty_board) -> list[list[bool]]:
+def checkered_board() -> list[list[bool]]:
     rtn: list[list[bool]] = []
     for i in range(9):
         rtn.append([])
