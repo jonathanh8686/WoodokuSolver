@@ -7,8 +7,10 @@ class Solver(ABC):
     """Represents an abstract class that is capable of responding with
     a desired move in a WoodokuGame
     """    
+
+    @staticmethod
     @abstractmethod
-    def get_move(self, state: WoodokuGame) -> tuple[Piece, Position]:
+    def get_move(state: WoodokuGame) -> tuple[Piece, Position]:
         """Returns the the piece and position that it would like to place in
         the given WoodokuGame state given some set of parameters.
 
