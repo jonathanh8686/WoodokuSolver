@@ -54,3 +54,13 @@ class WoodokuGame(ABC):
             bool: Whether or not his game has ended
         """        
         pass
+
+    @abstractmethod
+    def get_size(self) -> int:
+        """Returns the size of the board that this WoodokuGame is played on
+
+        Returns:
+            int: The size of the one side of the board that this WoodokuGame
+            is played on. Should be a positive integer.
+        """        
+        pass

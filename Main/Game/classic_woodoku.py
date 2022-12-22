@@ -43,7 +43,7 @@ class ClassicWoodoku(WoodokuGame):
                      for _ in range(self.SIZE)]
         self.__board: list[list[bool]] = [row[:] for row in board]
 
-        self.__consecutive_clears = 0
+        self.__consecutive_clears = consecutive_clears
 
         if (available_pieces is None):
             available_pieces = random.sample(get_pieces(), 3)
@@ -273,6 +273,16 @@ class ClassicWoodoku(WoodokuGame):
             if(__is_placeable(piece)):
                 return False
         return True
+
+    def get_size(self) -> int:
+        """Returns the size of the board that this game is played on,
+        which is always 9
+
+        Returns:
+            int: The size of the board this game is played on, which is
+            always 9
+        """        
+        return self.SIZE
 
     @property
     def board(self) -> list[list[bool]]:
