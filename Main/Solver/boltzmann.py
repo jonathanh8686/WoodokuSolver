@@ -10,8 +10,7 @@ class Boltzmann(Selector):
     """A solver that implements a random strategy, selecting any of the
     legal moves in a given game state.
     """    
-    @staticmethod
-    def get_move(state: WoodokuGame) -> tuple[Piece, Position]:
+    def get_move(self, state: WoodokuGame) -> tuple[Piece, Position]:
         """Returns a random move out of all the possible valid moves to
         make
 

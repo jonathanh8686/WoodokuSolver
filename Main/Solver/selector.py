@@ -6,9 +6,8 @@ from abc import abstractmethod
 
 class Selector(Solver):
 
-    @staticmethod
     @abstractmethod
-    def get_move(state: WoodokuGame) -> tuple[Piece, Position]:
+    def get_move(self, state: WoodokuGame) -> tuple[Piece, Position]:
         pass
 
     @staticmethod

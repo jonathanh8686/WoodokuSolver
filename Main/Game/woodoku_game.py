@@ -64,3 +64,9 @@ class WoodokuGame(ABC):
             is played on. Should be a positive integer.
         """        
         pass
+
+    @abstractmethod
+    def copy(self) -> "WoodokuGame":
+        """Returns a copy of this WoodokuGame
+        """        
+        pass

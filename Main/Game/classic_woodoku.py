@@ -34,7 +34,8 @@ class ClassicWoodoku(WoodokuGame):
         Args:
             seed (int, optional): The seed for the RNG for this game. Defaults to 0.
         """
-        random.seed(seed)
+        self.__seed = seed
+        random.seed(self.__seed)
 
         # this board is a 2-D matrix of False and True, depending on
         # whether or not the piece is occupied or not.
@@ -252,7 +253,7 @@ class ClassicWoodoku(WoodokuGame):
 
         Returns:
             bool: Whether or not the game is over
-        """        
+        """
         def __is_placeable(piece: Piece) -> bool:
             """Determines if the given piece has any valid moves on the current
             board
@@ -262,15 +263,15 @@ class ClassicWoodoku(WoodokuGame):
 
             Returns:
                 bool: Whether or not the given piece has any valid moves
-            """            
+            """
             for row in range(self.SIZE):
                 for col in range(self.SIZE):
-                    if(self.piece_will_fit(piece, Position(row, col))):
+                    if (self.piece_will_fit(piece, Position(row, col))):
                         return True
             return False
 
         for piece in self.__available_pieces:
-            if(__is_placeable(piece)):
+            if (__is_placeable(piece)):
                 return False
         return True
 
@@ -281,7 +282,7 @@ class ClassicWoodoku(WoodokuGame):
         Returns:
             int: The size of the board this game is played on, which is
             always 9
-        """        
+        """
         return self.SIZE
 
     @property
@@ -293,5 +294,11 @@ class ClassicWoodoku(WoodokuGame):
     @property
     def consecutive_clears(self) -> int:
         """Returns the number of consecutive clears in this game
-        """        
+        """
         return self.__consecutive_clears
+
+    def copy(self) -> "WoodokuGame":
+        return ClassicWoodoku(self.board,
+                              self.consecutive_clears,
+                              self.get_available_pieces(),
+                              self.__seed)

@@ -10,8 +10,7 @@ class Pythagoras(Selector):
     2. Legal positions in row-column order
     """    
 
-    @staticmethod
-    def get_move(state: WoodokuGame) -> tuple[Piece, Position]:
+    def get_move(self, state: WoodokuGame) -> tuple[Piece, Position]:
         """Returns the first legal move in order by defined in the
         documentation for Pythagoras
 

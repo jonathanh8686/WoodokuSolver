@@ -1,9 +1,8 @@
 from typing import Optional
+import tqdm #type: ignore
 from Main.Game.observer import ClassicTextObserver, Observer
 from Main.Game.woodoku_game import WoodokuGame
 from Main.Solver.solver import Solver
-from Main.Solver.boltzmann import Boltzmann
-from Main.Solver.pythagoras import Pythagoras
 from Main.Game.classic_woodoku import ClassicWoodoku
 
 class Environment:
@@ -36,16 +35,19 @@ class Environment:
                 return -1
             score += woodoku_game.place_piece(piece, position)
 
-            print("\n\n")
-            print(piece, f"{position.row}, {position.col}")
             for observer in self.__observers:
                 observer.receive_state(woodoku_game)
 
         return score
 
 if __name__ == "__main__":
-    env = Environment(observers=[ClassicTextObserver()])
-    solver = Pythagoras()
-    game = ClassicWoodoku()
+    from Main.Solver.boltzmann import Boltzmann
+    from Main.Solver.pythagoras import Pythagoras
+    from Main.Solver.euler import Euler
+    # env = Environment(observers=[ClassicTextObserver()])
+    env = Environment()
+    solver = Euler(60)
 
+    game = ClassicWoodoku()
     print(env.run_game(solver, game))
+    
