@@ -43,6 +43,10 @@ class ClassicWoodoku(WoodokuGame):
             board = [[False for _ in range(self.SIZE)]
                      for _ in range(self.SIZE)]
         self.__board: list[list[bool]] = [row[:] for row in board]
+        # self.__filled_squares: set[Position] = set()
+        # for row in range(len(self.__board)):
+        #     for col in range(len(self.__board)):
+        #         self.__filled_squares.add(Position(row, col))
 
         self.__consecutive_clears = consecutive_clears
 
@@ -177,7 +181,7 @@ class ClassicWoodoku(WoodokuGame):
                         to_clear = False
                         break
                 if (to_clear):
-                    reward += 18 * (self.__consecutive_clears + 1)
+                    reward += 18 * (self.consecutive_clears + 1)
                     __clear_row(row)
 
             # check all columns
@@ -188,7 +192,7 @@ class ClassicWoodoku(WoodokuGame):
                         to_clear = False
                         break
                 if (to_clear):
-                    reward += 18 * (self.__consecutive_clears + 1)
+                    reward += 18 * (self.consecutive_clears + 1)
                     __clear_col(col)
 
             # check all 3x3 squares
@@ -203,7 +207,7 @@ class ClassicWoodoku(WoodokuGame):
                             to_clear = False
                             break
                 if (to_clear):
-                    reward += 18 * (self.__consecutive_clears + 1)
+                    reward += 18 * (self.consecutive_clears + 1)
                     __clear_square(start_pos)
 
             return reward
@@ -218,13 +222,13 @@ class ClassicWoodoku(WoodokuGame):
             if (len(self.__available_pieces) == 0):
                 self.__available_pieces = random.sample(get_pieces(), 3)
 
-        if (not self.piece_will_fit(piece, pos)):
-            raise InvalidMoveError(
-                "The given piece does not fit in the given position")
+        # if (not self.piece_will_fit(piece, pos)):
+        #     raise InvalidMoveError(
+        #         "The given piece does not fit in the given position")
 
-        if (not piece in self.get_available_pieces()):
-            raise InvalidMoveError(
-                "The given piece is not a valid piece to place right now")
+        # if (not piece in self.get_available_pieces()):
+        #     raise InvalidMoveError(
+        #         "The given piece is not a valid piece to place right now")
 
         __handle_available_pieces()
 
@@ -296,6 +300,10 @@ class ClassicWoodoku(WoodokuGame):
         """Returns the number of consecutive clears in this game
         """
         return self.__consecutive_clears
+    
+    @property
+    def seed(self) -> int:
+        return self.__seed
 
     def copy(self) -> "WoodokuGame":
         return ClassicWoodoku(self.board,

@@ -70,3 +70,8 @@ class WoodokuGame(ABC):
         """Returns a copy of this WoodokuGame
         """        
         pass
+
+    @property
+    @abstractmethod
+    def board(self) -> list[list[bool]]:
+        pass
