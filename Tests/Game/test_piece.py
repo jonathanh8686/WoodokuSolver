@@ -1,10 +1,6 @@
 from Main.Game.piece import InvalidPieceError, Piece
-from Main.Game.position import Position
 import random
 import pytest
-
-from Tests.Game.Util.piece_util import get_square_piece
-
 
 def test_one_dim_pieces():
     p = Piece([[True]])
