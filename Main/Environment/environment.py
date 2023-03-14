@@ -7,6 +7,8 @@ from Main.Game.woodoku_game import WoodokuGame
 from Main.Solver.solver import Solver
 from Main.Game.classic_woodoku import ClassicWoodoku
 
+testing_seed = 955
+
 class Environment:
     def __init__(self, observers: Optional[list[Observer]]= None):
         if(observers is None):
@@ -58,7 +60,7 @@ if __name__ == "__main__":
 
     for i in range(n):
         start = time.perf_counter()
-        score = env.run_game(Euler(seconds_per_move=5), ClassicWoodoku(seed=i))
+        score = env.run_game(Euler(seconds_per_move=0.1, seed=testing_seed), ClassicWoodoku(seed=testing_seed))
 
         single_run_time = time.perf_counter() - start
         total_time += single_run_time

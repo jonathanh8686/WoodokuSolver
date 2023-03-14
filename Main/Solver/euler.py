@@ -21,6 +21,7 @@ class Node():
                  times_visited: int,
                  children: Optional[dict[tuple[Piece, Position], "Node"]]=None,
                  parent: Optional["Node"] = None):
+
         self.__state = state
         self.__total_reward = total_reward
         self.__times_visited = times_visited
@@ -80,8 +81,9 @@ class Euler(Solver):
     Monte Carlo Tree Search
     """
 
-    def __init__(self, seconds_per_move: int = 5):
+    def __init__(self, seconds_per_move: float = 5, seed: int = 0):
         self.__seconds_per_move = seconds_per_move
+        random.seed(seed)
 
     def get_move(self, state: WoodokuGame) -> tuple[Piece, Position]:
         """Returns a move as determined by a Monte-Carlo Tree Search on the
@@ -156,13 +158,13 @@ class Euler(Solver):
         Returns:
             int: The value of this vertex as computed via roll out.
         """
-        # curr_board = current_node.state.board
-        # roll_score = 0
-        # for row in range(len(curr_board)):
-        #     for col in range(len(curr_board[row])):
-        #         roll_score += 1 if curr_board[row][col] else 0
-        # return roll_score
-        return Environment().run_game(solver, current_node.state)
+        curr_board = current_node.state.board
+        roll_score = 0
+        for row in range(len(curr_board)):
+            for col in range(len(curr_board[row])):
+                roll_score += -10 if curr_board[row][col] else 1
+        return roll_score
+        # return Environment().run_game(solver, current_node.state)
 
     def back_propagate(self, leaf_node: Node, result: int) -> None:
         """Propagates the value of this vertex back up the tree to the parent
@@ -199,7 +201,6 @@ class Euler(Solver):
             if(best_child.total_reward / best_child.times_visited < child.total_reward / child.times_visited):
                 best_child = child
                 best_action = action
-                print(f"Found better: {best_child.total_reward / best_child.times_visited}")
 
         return best_action
 
